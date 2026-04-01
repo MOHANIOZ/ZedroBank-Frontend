@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZedroBank — Digital Banking</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="pageLoader">
+  <div class="loader-logo">ZedroBank</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toastHub"></div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-bg" id="cModal">
+  <div class="modal">
+    <h3 id="cTitle">Confirm</h3>
+    <p id="cMsg">This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" id="cConfirm" style="flex:1;justify-content:center;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AUTH PAGE ===== -->
+<div id="authPage">
+  <div class="auth-grid"></div>
+  <div class="auth-glow"></div>
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="mark">₹</div>
+      <h1>ZedroBank</h1>
+      <p>Secure · Instant · Digital Banking</p>
+    </div>
+    <div class="tabs">
+      <button class="tab on" id="tabL" onclick="authTab('login')">Sign In</button>
+      <button class="tab"    id="tabR" onclick="authTab('reg')">Create Account</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="fL">
+      <div class="field"><label>Username</label>
+        <div class="iw"><span class="ico">👤</span>
+          <input type="text" class="ico-pad" id="lU" placeholder="Your username" autocomplete="username"></div></div>
+      <div class="field"><label>Password</label>
+        <div class="iw"><span class="ico">🔒</span>
+          <input type="password" class="ico-pad" id="lP" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div></div>
+      <button class="btn-main" id="btnL" onclick="doLogin()">Sign In →</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="fR" style="display:none;">
+      <div class="field"><label>Full Name</label>
+        <div class="iw"><span class="ico">✏️</span>
+          <input type="text" class="ico-pad" id="rN" placeholder="Your full name"></div></div>
+      <div class="field"><label>Username</label>
+        <div class="iw"><span class="ico">👤</span>
+          <input type="text" class="ico-pad" id="rU" placeholder="Pick a username" autocomplete="username"></div></div>
+      <div class="field"><label>Password</label>
+        <div class="iw"><span class="ico">🔒</span>
+          <input type="password" class="ico-pad" id="rP" placeholder="Min 4 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div></div>
+      <button class="btn-main" id="btnR" onclick="doRegister()">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP PAGE ===== -->
+<div id="appPage">
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="sb-brand">
+        <div class="sb-icon">₹</div>
+        <h2>ZedroBank</h2>
+      </div>
+      <div class="sb-user">
+        <div class="sb-avatar" id="sbAv">U</div>
+        <div>
+          <div class="sb-uname" id="sbNm">—</div>
+          <div class="sb-role">Account Holder</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-grp">
+        <div class="nav-grp-label">Overview</div>
+        <button class="nav-btn on" id="nb-dashboard"    onclick="go('dashboard')"><span class="nav-ico">🏠</span>Dashboard</button>
+        <button class="nav-btn"    id="nb-myaccount"    onclick="go('myaccount')"><span class="nav-ico">💳</span>My Account</button>
+        <button class="nav-btn"    id="nb-transactions" onclick="go('transactions')"><span class="nav-ico">📋</span>Transactions</button>
+      </div>
+      <div class="nav-grp">
+        <div class="nav-grp-label">Banking</div>
+        <button class="nav-btn" id="nb-deposit"   onclick="go('deposit')"><span class="nav-ico">💰</span>Deposit</button>
+        <button class="nav-btn" id="nb-withdraw"  onclick="go('withdraw')"><span class="nav-ico">💸</span>Withdraw</button>
+        <button class="nav-btn" id="nb-transfer"  onclick="go('transfer')"><span class="nav-ico">🔄</span>Transfer</button>
+      </div>
+      <div class="nav-grp">
+        <div class="nav-grp-label">Admin Tools</div>
+        <button class="nav-btn" id="nb-accounts"   onclick="go('accounts')"><span class="nav-ico">👥</span>All Accounts</button>
+        <button class="nav-btn" id="nb-newaccount" onclick="go('newaccount')"><span class="nav-ico">➕</span>New Account</button>
+      </div>
+    </nav>
+    <div class="sb-bottom">
+      <button class="btn-logout" onclick="doLogout()">⏻&nbsp; Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="pg on" id="pg-dashboard">
+      <div class="ph">
+        <div><h2>Welcome back, <span id="wNm">—</span> 👋</h2><p>Your banking overview</p></div>
+        <button class="btn btn-outline btn-sm" onclick="loadDash()">↻ Refresh</button>
+      </div>
+      <div class="acc-card">
+        <div class="acc-label">Account Holder</div>
+        <div class="acc-name" id="dNm">Loading…</div>
+        <div class="acc-bal-label">Available Balance</div>
+        <div class="acc-balance" id="dBal">—</div>
+        <div class="acc-meta">
+          <div class="acc-chip">Account ID: <span id="dId">—</span></div>
+        </div>
+      </div>
+      <div class="qa-grid">
+        <div class="qa" onclick="go('deposit')"><div class="qa-ico" style="background:var(--green-dim);">💰</div><h4>Deposit</h4><p>Add funds</p></div>
+        <div class="qa" onclick="go('withdraw')"><div class="qa-ico" style="background:var(--red-dim);">💸</div><h4>Withdraw</h4><p>Take out funds</p></div>
+        <div class="qa" onclick="go('transfer')"><div class="qa-ico" style="background:var(--blue-dim);">🔄</div><h4>Transfer</h4><p>Send money</p></div>
+        <div class="qa" onclick="go('transactions')"><div class="qa-ico" style="background:rgba(124,92,246,.12);">📋</div><h4>History</h4><p>Transactions</p></div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-head"><h3>Recent Transactions</h3>
+          <button class="btn btn-outline btn-sm" onclick="go('transactions')">View All →</button></div>
+        <div id="dTx"><div class="empty"><span class="empty-ico">📋</span>Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- MY ACCOUNT -->
+    <div class="pg" id="pg-myaccount">
+      <div class="ph">
+        <div><h2>My Account</h2><p>Your personal account details</p></div>
+        <button class="btn btn-outline btn-sm" onclick="loadMyAcc()">↻ Refresh</button>
+      </div>
+      <div id="myAccA"><div class="empty"><span class="empty-ico">💳</span>Loading…</div></div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-red" onclick="confirmDelMe()">🗑 Delete My Account</button>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="pg" id="pg-transactions">
+      <div class="ph">
+        <div><h2>Transaction History</h2><p>All your past transactions</p></div>
+        <button class="btn btn-outline btn-sm" onclick="loadTx()">↻ Refresh</button>
+      </div>
+      <div class="tcard">
+        <div id="txA"><div class="empty"><span class="empty-ico">📋</span>Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- DEPOSIT -->
+    <div class="pg" id="pg-deposit">
+      <div class="ph"><div><h2>Deposit Funds</h2><p>Add money to any account</p></div></div>
+      <div class="form-panel">
+        <h3>Make a Deposit</h3>
+        <p class="sub">Enter the account ID and amount below</p>
+        <div class="field"><label>Account ID</label><input type="number" id="depId" placeholder="e.g. 1" min="1"></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="depAmt" placeholder="e.g. 5000" min="1"></div>
+        <button class="btn btn-green" id="btnDep" onclick="doDeposit()">💰 Deposit</button>
+        <div class="result-box" id="depR"></div>
+      </div>
+    </div>
+
+    <!-- WITHDRAW -->
+    <div class="pg" id="pg-withdraw">
+      <div class="ph"><div><h2>Withdraw Funds</h2><p>Withdraw money from an account</p></div></div>
+      <div class="form-panel">
+        <h3>Make a Withdrawal</h3>
+        <p class="sub">Ensure the account has sufficient balance</p>
+        <div class="field"><label>Account ID</label><input type="number" id="wdId" placeholder="e.g. 1" min="1"></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="wdAmt" placeholder="e.g. 1000" min="1"></div>
+        <button class="btn btn-red" id="btnWd" onclick="doWithdraw()">💸 Withdraw</button>
+        <div class="result-box" id="wdR"></div>
+      </div>
+    </div>
+
+    <!-- TRANSFER -->
+    <div class="pg" id="pg-transfer">
+      <div class="ph"><div><h2>Transfer Funds</h2><p>Send money between accounts</p></div></div>
+      <div class="form-panel">
+        <h3>Fund Transfer</h3>
+        <p class="sub">Instant transfer between any two accounts</p>
+        <div class="form-2col">
+          <div class="field"><label>From Account ID</label><input type="number" id="tfFr" placeholder="Sender ID"></div>
+          <div class="field"><label>To Account ID</label><input type="number" id="tfTo" placeholder="Recipient ID"></div>
+        </div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="tfAmt" placeholder="Amount to transfer" min="1"></div>
+        <button class="btn btn-blue" id="btnTf" onclick="doTransfer()">🔄 Transfer Now</button>
+        <div class="result-box" id="tfR"></div>
+      </div>
+    </div>
+
+    <!-- ALL ACCOUNTS -->
+    <div class="pg" id="pg-accounts">
+      <div class="ph">
+        <div><h2>All Accounts</h2><p>Manage all registered accounts</p></div>
+        <button class="btn btn-outline btn-sm" onclick="loadAllAccs()">↻ Refresh</button>
+      </div>
+      <div class="tcard">
+        <div class="tcard-head"><h3>Registered Accounts</h3>
+          <span id="accCnt" style="font-size:12px;color:var(--text2);"></span></div>
+        <div id="allAccA"><div class="empty"><span class="empty-ico">👥</span>Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- NEW ACCOUNT -->
+    <div class="pg" id="pg-newaccount">
+      <div class="ph"><div><h2>Create Account</h2><p>Register a new bank account</p></div></div>
+      <div class="form-panel">
+        <h3>New Account</h3>
+        <p class="sub">Fill in the details to open a new account</p>
+        <div class="field"><label>Account Holder Name</label><input type="text" id="naName" placeholder="Full name"></div>
+        <div class="field"><label>Initial Balance (₹)</label><input type="number" id="naBal" placeholder="0" min="0" value="0"></div>
+        <button class="btn btn-green" id="btnNA" onclick="doNewAcc()">➕ Create Account</button>
+        <div class="result-box" id="naR"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
